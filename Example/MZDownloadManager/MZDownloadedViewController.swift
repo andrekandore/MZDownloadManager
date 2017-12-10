@@ -11,6 +11,8 @@ import MZDownloadManager
 
 class MZDownloadedViewController: UITableViewController {
     
+    let customFilepath = MZAvailableDownloadsViewController.myDownloadPath
+    
     var downloadedFilesArray : [String] = []
     var selectedIndexPath    : IndexPath?
     var fileManger           : FileManager = FileManager.default
@@ -21,7 +23,7 @@ class MZDownloadedViewController: UITableViewController {
         // Do any additional setup after loading the view.
 
         do {
-            let contentOfDir: [String] = try FileManager.default.contentsOfDirectory(atPath: MZUtility.baseFilePath as String)
+            let contentOfDir: [String] = try FileManager.default.contentsOfDirectory(atPath: customFilepath as String)
             downloadedFilesArray.append(contentsOf: contentOfDir)
             
             let index = downloadedFilesArray.index(of: ".DS_Store")
@@ -81,7 +83,7 @@ extension MZDownloadedViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         let fileName : NSString = downloadedFilesArray[(indexPath as NSIndexPath).row] as NSString
-        let fileURL  : URL = URL(fileURLWithPath: (MZUtility.baseFilePath as NSString).appendingPathComponent(fileName as String))
+        let fileURL  : URL = URL(fileURLWithPath: (customFilepath as NSString).appendingPathComponent(fileName as String))
         
         do {
             try fileManger.removeItem(at: fileURL)

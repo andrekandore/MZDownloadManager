@@ -14,15 +14,17 @@ class MZAvailableDownloadsViewController: UITableViewController {
     var mzDownloadingViewObj    : MZDownloadManagerViewController?
     var availableDownloadsArray: [(file:String,name:String?)] = []
     
-    let myDownloadPath = MZUtility.baseFilePath + "/My Downloads"
-    
+    static let myDownloadPath = MZUtility.baseFilePath + "/My Downloads"
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !FileManager.default.fileExists(atPath: myDownloadPath) {
-            try! FileManager.default.createDirectory(atPath: myDownloadPath, withIntermediateDirectories: true, attributes: nil)
+        let customPath = MZAvailableDownloadsViewController.myDownloadPath
+
+        if !FileManager.default.fileExists(atPath: customPath) {
+            try! FileManager.default.createDirectory(atPath: customPath, withIntermediateDirectories: true, attributes: nil)
         }
-        debugPrint("custom download path: \(myDownloadPath)")
+        debugPrint("custom download path: \(customPath)")
 
         availableDownloadsArray.append(("https://www.dropbox.com/s/yrura6qlcgcwpp4/file1.mp4?dl=1",nil))
         availableDownloadsArray.append(("https://www.dropbox.com/s/y9kgs6caztxxjdh/AlecrimCoreData-master.zip?dl=1",nil))
@@ -76,14 +78,16 @@ extension MZAvailableDownloadsViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        let customPath = MZAvailableDownloadsViewController.myDownloadPath
+
         let fileInfo = availableDownloadsArray[(indexPath as NSIndexPath).row]
         let fileURL : NSString = fileInfo.file as NSString
         var fileName : NSString = (fileInfo.name ?? fileURL.lastPathComponent) as NSString
-        fileName = MZUtility.getUniqueFileNameWithPath((myDownloadPath as NSString).appendingPathComponent(fileName as String) as NSString)
+        fileName = MZUtility.getUniqueFileNameWithPath((customPath as NSString).appendingPathComponent(fileName as String) as NSString)
         //Use it download at default path i.e document directory
 //        mzDownloadingViewObj?.downloadManager.addDownloadTask(fileName as String, fileURL: fileURL as String)
         
-        mzDownloadingViewObj?.downloadManager.addDownloadTask(fileName as String, fileURL: fileURL as String, destinationPath: myDownloadPath)
+        mzDownloadingViewObj?.downloadManager.addDownloadTask(fileName as String, fileURL: fileURL as String, destinationPath: customPath)
         
         availableDownloadsArray.remove(at: (indexPath as NSIndexPath).row)
         tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.right)
