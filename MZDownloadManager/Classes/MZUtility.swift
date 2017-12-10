@@ -36,9 +36,9 @@ open class MZUtility: NSObject {
         return cleanedFilename as NSString
     }
     
-    open class func getUniqueFileNameWithPath(_ filePath : NSString) -> NSString {
+    open class func getUniqueFileNameWithPath(_ filePath : NSString, or customName : NSString? = nil) -> NSString {
         let fullFileName        : NSString = filePath.lastPathComponent as NSString
-        let fileName            : NSString = fullFileName.deletingPathExtension as NSString
+        let fileName            : NSString = cleanedCustomFileName((customName ?? fullFileName.deletingPathExtension as NSString))
         let fileExtension       : NSString = fullFileName.pathExtension as NSString
         var suggestedFileName   : NSString = fileName
         
