@@ -12,7 +12,7 @@ import MZDownloadManager
 class MZAvailableDownloadsViewController: UITableViewController {
     
     var mzDownloadingViewObj    : MZDownloadManagerViewController?
-    var availableDownloadsArray: [String] = []
+    var availableDownloadsArray: [(file:String,name:String?)] = []
     
     let myDownloadPath = MZUtility.baseFilePath + "/My Downloads"
     
@@ -24,13 +24,14 @@ class MZAvailableDownloadsViewController: UITableViewController {
         }
         debugPrint("custom download path: \(myDownloadPath)")
 
-        availableDownloadsArray.append("https://www.dropbox.com/s/yrura6qlcgcwpp4/file1.mp4?dl=1")
-        availableDownloadsArray.append("https://www.dropbox.com/s/y9kgs6caztxxjdh/AlecrimCoreData-master.zip?dl=1")
-        availableDownloadsArray.append("https://www.dropbox.com/s/73ymbx6icoiqus9/file2.mp4?dl=1")
-        availableDownloadsArray.append("https://www.dropbox.com/s/4pw4jwiju0eon6r/file3.mp4?dl=1")
-        availableDownloadsArray.append("https://www.dropbox.com/s/2bmbk8id7nseirq/file4.mp4?dl=1")
-        availableDownloadsArray.append("https://www.dropbox.com/s/cw7wfyaic9rtzwd/GCDExample-master.zip?dl=1")
-        
+        availableDownloadsArray.append(("https://www.dropbox.com/s/yrura6qlcgcwpp4/file1.mp4?dl=1",nil))
+        availableDownloadsArray.append(("https://www.dropbox.com/s/y9kgs6caztxxjdh/AlecrimCoreData-master.zip?dl=1",nil))
+        availableDownloadsArray.append(("https://www.dropbox.com/s/73ymbx6icoiqus9/file2.mp4?dl=1",nil))
+        availableDownloadsArray.append(("https://www.dropbox.com/s/4pw4jwiju0eon6r/file3.mp4?dl=1",nil))
+        availableDownloadsArray.append(("https://www.dropbox.com/s/2bmbk8id7nseirq/file4.mp4?dl=1",nil))
+        availableDownloadsArray.append(("https://www.dropbox.com/s/cw7wfyaic9rtzwd/GCDExample-master.zip?dl=1)",nil))
+        availableDownloadsArray.append(("https://www.dropbox.com/s/cw7wfyaic9rtzwd/GCDExample-master.zip?dl=1)","Illegal/Filename: \\ : * ? | < >.zip")) //in most cases this "illegal name" will just be a foward slash...
+
         self.setUpDownloadingViewController()
     }
     
@@ -59,9 +60,10 @@ extension MZAvailableDownloadsViewController {
         let cellIdentifier : NSString = "AvailableDownloadsCell"
         let cell : UITableViewCell = self.tableView.dequeueReusableCell(withIdentifier: cellIdentifier as String, for: indexPath) as UITableViewCell
         
-        let fileURL  : NSString = availableDownloadsArray[(indexPath as NSIndexPath).row] as NSString
-        let fileName : NSString = fileURL.lastPathComponent as NSString
-        
+        let fileInfo = availableDownloadsArray[(indexPath as NSIndexPath).row]
+        let fileURL : NSString = fileInfo.file as NSString
+        let fileName : NSString = (fileInfo.name ?? fileURL.lastPathComponent) as NSString
+
         cell.textLabel?.text = fileName as String
         
         return cell
@@ -74,10 +76,10 @@ extension MZAvailableDownloadsViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let fileURL  : NSString = availableDownloadsArray[(indexPath as NSIndexPath).row] as NSString
-        var fileName : NSString = fileURL.lastPathComponent as NSString
+        let fileInfo = availableDownloadsArray[(indexPath as NSIndexPath).row]
+        let fileURL : NSString = fileInfo.file as NSString
+        var fileName : NSString = (fileInfo.name ?? fileURL.lastPathComponent) as NSString
         fileName = MZUtility.getUniqueFileNameWithPath((myDownloadPath as NSString).appendingPathComponent(fileName as String) as NSString)
-        
         //Use it download at default path i.e document directory
 //        mzDownloadingViewObj?.downloadManager.addDownloadTask(fileName as String, fileURL: fileURL as String)
         
