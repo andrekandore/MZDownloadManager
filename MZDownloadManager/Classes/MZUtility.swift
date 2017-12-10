@@ -18,6 +18,24 @@ open class MZUtility: NSObject {
         return (NSHomeDirectory() as NSString).appendingPathComponent("Documents") as String
     }()
 
+    open class func cleanedCustomFileName(_ customFilename : NSString) -> NSString {
+        debugPrint("file name before cleaning = \(customFilename)")
+        
+        let originalFilename = customFilename.decomposedStringWithCompatibilityMapping
+        
+        var invalidCharacters = CharacterSet(charactersIn: ":/")
+        invalidCharacters.formUnion(.newlines)
+        invalidCharacters.formUnion(.illegalCharacters)
+        invalidCharacters.formUnion(.controlCharacters)
+        
+        let cleanedFilename = originalFilename
+            .components(separatedBy: invalidCharacters)
+            .joined(separator: " ")
+        debugPrint("file name after cleaning = \(cleanedFilename)")
+        
+        return cleanedFilename as NSString
+    }
+    
     open class func getUniqueFileNameWithPath(_ filePath : NSString) -> NSString {
         let fullFileName        : NSString = filePath.lastPathComponent as NSString
         let fileName            : NSString = fullFileName.deletingPathExtension as NSString
@@ -49,7 +67,7 @@ open class MZUtility: NSObject {
                     suggestedFileName = "\(suggestedFileName).\(fileExtension)" as NSString
                 }
             }
-        
+            
         } while isUnique == false
         
         return suggestedFileName
@@ -92,7 +110,7 @@ open class MZUtility: NSObject {
                 print("Error excluding \(url.lastPathComponent) from backup \(error)")
                 return false
             }
-
+            
         } else {
             return false
         }
@@ -111,3 +129,4 @@ open class MZUtility: NSObject {
         }
     }
 }
+
