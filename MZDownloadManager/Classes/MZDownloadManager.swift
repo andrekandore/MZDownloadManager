@@ -217,7 +217,13 @@ extension MZDownloadManager: URLSessionDelegate {
     func URLSession(_ session: Foundation.URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingToURL location: URL) {
         for (index, downloadModel) in downloadingArray.enumerated() {
             if downloadTask.isEqual(downloadModel.task) {
-                let fileName = downloadModel.fileName as NSString
+                
+                //call MZUtility.cleanedCustomFileName() here just in case a client
+                //of this library didnt utilize that function; this will make sure we
+                //get a perfectly legal name to save to because some clients let users
+                //name thier downloads and neglect to call the aforementioned method
+                let fileName = MZUtility.cleanedCustomFileName(downloadModel.fileName as NSString)
+                
                 let basePath = downloadModel.destinationPath == "" ? MZUtility.baseFilePath : downloadModel.destinationPath
                 let destinationPath = (basePath as NSString).appendingPathComponent(fileName as String)
                 
